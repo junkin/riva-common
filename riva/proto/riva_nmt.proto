@@ -21,11 +21,73 @@ service RivaTranslation {
 
   // Translate text to text, from a source to a target language.  Currently source and target language fields is required, along with the model name.
   // Multiple texts may be passed per request up to the given batch size for the model, which is set at translation pipeline creation time.
-rpc TranslateText(TranslateTextRequest) returns (TranslateTextResponse) {}
+  rpc TranslateText(TranslateTextRequest) returns (TranslateTextResponse) {}
 
   // Lists the available language pairs and models names to be used for TranslateText
   rpc ListSupportedLanguagePairs(AvailableLanguageRequest) returns (AvailableLanguageResponse) {}
+
+  //streaming speech to text translation api.
+  rpc StreamingTranslateSpeechToText(stream StreamingTranslateSpeechToTextRequest)
+        returns (stream StreamingTranslateSpeechToTextResponse) {}
+
+  //offline speech to text translation api.
+  rpc TranslateSpeechToText(TranslateSpeechToTextRequest) returns (TranslateSpeechToTextResponse) {}
+
+  //Returns the parameters for the configurated pipelines.
+  rpc GetTranslateSpeechToTextConfig(GetTranslateSpeechToTextConfigRequest) returns (GetTranslateSpeechToTextConfigResponse)
+
+  rpc StreamingTranslateSpeechToSpeech(stream StreamingTranslateSpeechToSpeechRequest)
+        returns (stream StreamingTranslateSpeechToSpeechResponse) {}
+
+  //offline speech to text translation api.
+  rpc TranslateSpeechToSpeech(TranslateSpeechToSpeechRequest) returns (TranslateSpeechToSpeechResponse) {}
+
+
 }
+
+//Configuration for Translate speech
+
+message TranslateSpeechToSpeechConfig {
+   RecognitionConfig asrConfig = 1;  //from riva_asr.proto
+   SynthesizeSpeechConfig ttsConfig = 2; //from riva_tts.proto
+   string source_language_code = 3;
+   string target_language_code = 3;
+}
+
+
+message StreamingTranslateSpeechToSpeechRequest {
+   oneof streaming_request {
+       TranslateSpeechToSpeechConfig config = 1;
+       bytes audio_content = 2;
+   }
+}
+
+
+message StreamingTranslateSpeechToSpeechResponse {
+    SynthesizeSpeechResponse speech = 1; //from riva_tts.proto
+}
+
+message StreamingTranslateSpeechToTextRequest {
+  oneof streaming_request {
+     TranslateSpeechToTextConfig config = 1;
+     bytes audio_content = 2;
+  }
+}
+
+message StreamingTranslateSpeechToTextResponse {
+
+   StreamingRecognitionResult results = 1; //from riva_asr.proto
+}
+
+message TranslateSpeechToTextConfig {
+   RecognitionConfig config = 1; //existing ASR config, reuse?
+   bool interim_results = 2;  // not always supported
+   //BCP-47 "en-US"
+   string source_language_code = 3;
+   string target_language_code = 4;
+
+}
+
 
 // request for synchronous translation of each text in texts.
 // Available languages can be queried using ListSupportLanguagePairs RPC.
