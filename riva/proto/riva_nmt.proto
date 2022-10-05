@@ -12,6 +12,9 @@ package nvidia.riva.nmt;
 
 option cc_enable_arenas = true;
 option go_package = "nvidia.com/riva_speech";
+import "riva/proto/riva_audio.proto";
+import "riva/proto/riva_asr.proto";
+import "riva/proto/riva_tts.proto";
 
 /*
  *  RivaTranslation service provides rpcs to translate between languages.
@@ -45,8 +48,9 @@ service RivaTranslation {
 
 }
 
-//Configuration for Translate speech
-
+/*
+* Configuration for Translate S2S.  reuse existing protos from other services.
+* /
 message TranslateSpeechToSpeechConfig {
    RecognitionConfig asrConfig = 1;  //from riva_asr.proto
    SynthesizeSpeechConfig ttsConfig = 2; //from riva_tts.proto
@@ -54,7 +58,11 @@ message TranslateSpeechToSpeechConfig {
    string target_language_code = 3;
 }
 
-
+/*
+* Streaming translate speech to speech used to configure the entire pipline for speech translation.  This can be
+* be backed by a cascade of ASR, NMT, TTS models or an end to end model
+*
+*/
 message StreamingTranslateSpeechToSpeechRequest {
    oneof streaming_request {
        TranslateSpeechToSpeechConfig config = 1;
@@ -62,7 +70,9 @@ message StreamingTranslateSpeechToSpeechRequest {
    }
 }
 
-
+/*
+*
+*/
 message StreamingTranslateSpeechToSpeechResponse {
     SynthesizeSpeechResponse speech = 1; //from riva_tts.proto
 }
