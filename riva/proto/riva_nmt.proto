@@ -34,28 +34,29 @@ service RivaTranslation {
         returns (stream StreamingTranslateSpeechToTextResponse) {}
 
   //offline speech to text translation api.
-  rpc TranslateSpeechToText(TranslateSpeechToTextRequest) returns (TranslateSpeechToTextResponse) {}
+  //rpc TranslateSpeechToText(TranslateSpeechToTextRequest) returns (TranslateSpeechToTextResponse) {}
 
   //Returns the parameters for the configurated pipelines.
-  rpc GetTranslateSpeechToTextConfig(GetTranslateSpeechToTextConfigRequest) returns (GetTranslateSpeechToTextConfigResponse)
+  //rpc GetTranslateSpeechToTextConfig(GetTranslateSpeechToTextConfigRequest) returns (GetTranslateSpeechToTextConfigResponse) {}
 
   rpc StreamingTranslateSpeechToSpeech(stream StreamingTranslateSpeechToSpeechRequest)
-        returns (stream StreamingTranslateSpeechToSpeechResponse) {}
+    returns (stream StreamingTranslateSpeechToSpeechResponse) {}
 
   //offline speech to text translation api.
-  rpc TranslateSpeechToSpeech(TranslateSpeechToSpeechRequest) returns (TranslateSpeechToSpeechResponse) {}
+  //rpc TranslateSpeechToSpeech(TranslateSpeechToSpeechRequest) returns (TranslateSpeechToSpeechResponse) {}
 
 
 }
 
 /*
 * Configuration for Translate S2S.  reuse existing protos from other services.
-* /
+*/
 message TranslateSpeechToSpeechConfig {
-   RecognitionConfig asrConfig = 1;  //from riva_asr.proto
+   nvidia.riva.asr.RecognitionConfig asrConfig = 1;  //from riva_asr.proto
    SynthesizeSpeechConfig ttsConfig = 2; //from riva_tts.proto
    string source_language_code = 3;
-   string target_language_code = 3;
+   string target_language_code = 4;
+   AudioEncoding t = 5;
 }
 
 /*
@@ -70,11 +71,17 @@ message StreamingTranslateSpeechToSpeechRequest {
    }
 }
 
+message SynthesizeSpeechConfig {
+        AudioEncoding encoding = 1;
+        int32 sample_rate_hz = 2;
+        string voice_name = 3;
+}
+
 /*
 *
 */
 message StreamingTranslateSpeechToSpeechResponse {
-    SynthesizeSpeechResponse speech = 1; //from riva_tts.proto
+        nvidia.riva.tts.SynthesizeSpeechResponse speech = 1; //from riva_tts.proto
 }
 
 message StreamingTranslateSpeechToTextRequest {
@@ -86,11 +93,11 @@ message StreamingTranslateSpeechToTextRequest {
 
 message StreamingTranslateSpeechToTextResponse {
 
-   StreamingRecognitionResult results = 1; //from riva_asr.proto
+   nvidia.riva.asr.StreamingRecognitionResult results = 1; //from riva_asr.proto
 }
 
 message TranslateSpeechToTextConfig {
-   RecognitionConfig config = 1; //existing ASR config, reuse?
+   nvidia.riva.asr.RecognitionConfig config = 1; //existing ASR config, reuse?
    bool interim_results = 2;  // not always supported
    //BCP-47 "en-US"
    string source_language_code = 3;
