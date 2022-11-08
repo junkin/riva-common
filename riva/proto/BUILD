@@ -46,11 +46,6 @@ cc_grpc_library(
          ]
 )
 
-cc_grpc_library(
-    name = "riva_grpc_nmt",
-    srcs = [":riva_nmt.proto"],
-    deps = []
-)
 
 cc_grpc_library(
     name = "riva_grpc_health",
