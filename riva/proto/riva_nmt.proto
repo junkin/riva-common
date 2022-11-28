@@ -93,7 +93,7 @@ message StreamingTranslateSpeechToTextRequest {
 
 message StreamingTranslateSpeechToTextResponse {
 
-   nvidia.riva.asr.StreamingRecognitionResult results = 1; //from riva_asr.proto
+   repeated nvidia.riva.asr.StreamingRecognitionResult results = 1; //from riva_asr.proto
 }
 
 message TranslateSpeechToTextConfig {
